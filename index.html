@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>진보지질 현장일보</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.png">
+  <meta name="theme-color" content="#C9A227">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="현장일보">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: "Noto Sans KR", sans-serif;
+    }
+    .logo {
+      width: 140px;
+      height: 140px;
+      margin-bottom: 24px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.85; }
+    }
+    h1 {
+      color: #C9A227;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    p {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 36px;
+    }
+    .btn {
+      background: linear-gradient(135deg, #C9A227, #e8c547);
+      color: #1a1a1a;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(201,162,39,0.4);
+      letter-spacing: 1px;
+    }
+    .btn:active { transform: scale(0.97); }
+    .company {
+      margin-top: 40px;
+      color: #555;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <img class="logo" src="icons/icon-192.png" alt="진보지질 로고">
+  <h1>현장일보</h1>
+  <p>진보지질(주) 현장 일일 보고</p>
+  <a class="btn" href="https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform">
+    📋 현장일보 작성
+  </a>
+  <span class="company">진보지질(주) ⓒ 2026</span>
+  <script>
+    // 자동 리디렉션 (2초 후)
+    setTimeout(() => {
+      window.location.href = "https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform";
+    }, 2000);
+  </script>
+</body>
+</html>
