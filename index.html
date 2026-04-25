@@ -2,82 +2,399 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>진보지질 현장일보</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>진보지질 현장앱</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icons/favicon.png">
   <meta name="theme-color" content="#C9A227">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="현장일보">
+  <meta name="apple-mobile-web-app-title" content="현장앱">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
     body {
-      background-color: #1a1a1a;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-family: "Noto Sans KR", sans-serif;
+      padding: 24px 20px 40px;
     }
-    .logo {
-      width: 140px;
-      height: 140px;
-      margin-bottom: 24px;
-      animation: pulse 1.5s ease-in-out infinite;
+
+    /* ── 헤더 ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      width: 100%;
+      max-width: 400px;
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.85; }
-    }
-    h1 {
-      color: #C9A227;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
-    }
-    p {
-      color: #aaa;
-      font-size: 14px;
-      margin-bottom: 36px;
-    }
-    .btn {
-      background: linear-gradient(135deg, #C9A227, #e8c547);
-      color: #1a1a1a;
-      border: none;
-      padding: 16px 40px;
-      border-radius: 50px;
+    .logo { width: 52px; height: 52px; }
+    .header-text h1 {
       font-size: 18px;
       font-weight: 700;
+      color: #C9A227;
+    }
+    .header-text p {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .date-chip {
+      margin-left: auto;
+      background: #252525;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 11px;
+      color: #888;
+      white-space: nowrap;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: #252525;
+      border-radius: 18px;
+      padding: 22px;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 14px;
+    }
+    .card-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #C9A227;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* ── 드롭다운 ── */
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #C9A227;
+      font-size: 16px;
+      pointer-events: none;
+    }
+    select {
+      width: 100%;
+      padding: 15px 44px 15px 16px;
+      background: #333;
+      border: 1.5px solid #444;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
       cursor: pointer;
-      text-decoration: none;
-      box-shadow: 0 4px 20px rgba(201,162,39,0.4);
+      transition: border-color 0.2s;
+    }
+    select:focus { border-color: #C9A227; }
+    option { background: #333; }
+
+    /* ── 새 현장 입력 ── */
+    .new-field-area {
+      display: none;
+      margin-top: 12px;
+    }
+    .new-field-area.show { display: block; }
+    input[type=text] {
+      width: 100%;
+      padding: 14px 16px;
+      background: #333;
+      border: 1.5px solid #C9A227;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+    input::placeholder { color: #666; }
+
+    /* ── 선택된 현장 뱃지 ── */
+    .field-badge {
+      display: none;
+      margin-top: 14px;
+      background: linear-gradient(135deg, #1a2a0a, #1e3a1a);
+      border: 1px solid #4a8a2a;
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .field-badge.show { display: flex; }
+    .field-badge-icon { font-size: 20px; }
+    .field-badge-text {
+      flex: 1;
+    }
+    .field-badge-label {
+      font-size: 10px;
+      color: #6dbf3a;
+      font-weight: 600;
       letter-spacing: 1px;
     }
-    .btn:active { transform: scale(0.97); }
-    .company {
-      margin-top: 40px;
+    .field-badge-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 2px;
+    }
+
+    /* ── 액션 버튼 영역 ── */
+    .action-area {
+      display: none;
+      width: 100%;
+      max-width: 400px;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .action-area.show { display: flex; }
+
+    /* ── 버튼 ── */
+    .btn {
+      display: flex;
+      align-items: center;
+      padding: 0;
+      border-radius: 16px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.1s, opacity 0.1s;
+      width: 100%;
+    }
+    .btn:active { transform: scale(0.97); opacity: 0.9; }
+
+    .btn-icon {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .btn-content {
+      flex: 1;
+      padding: 0 16px;
+      text-align: left;
+    }
+    .btn-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: block;
+    }
+    .btn-sub {
+      font-size: 11px;
+      opacity: 0.75;
+      display: block;
+      margin-top: 2px;
+    }
+    .btn-arrow {
+      font-size: 18px;
+      padding-right: 16px;
+      opacity: 0.5;
+    }
+
+    /* 현장일보 작성 버튼 */
+    .btn-report {
+      background: linear-gradient(135deg, #C9A227, #e8c547);
+      color: #1a1a1a;
+    }
+    .btn-report .btn-icon { background: rgba(0,0,0,0.1); }
+
+    /* 파일 보내기 버튼 */
+    .btn-file {
+      background: #1e3a5f;
+      color: #fff;
+      border: 1.5px solid #2a5a8f;
+    }
+    .btn-file .btn-icon { background: rgba(255,255,255,0.05); color: #5eb3ff; }
+    .btn-file .btn-title { color: #5eb3ff; }
+
+    /* ── 파일 안내 텍스트 ── */
+    .file-guide {
+      margin-top: 2px;
+      background: #1e2a1e;
+      border: 1px solid #2a4a2a;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: #888;
+      line-height: 1.7;
+    }
+    .file-guide strong { color: #6dbf3a; }
+
+    /* ── 하단 설명 ── */
+    .footer-tip {
+      font-size: 11px;
       color: #555;
-      font-size: 12px;
+      text-align: center;
+      margin-top: 8px;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
-  <img class="logo" src="icons/icon-192.png" alt="진보지질 로고">
-  <h1>현장일보</h1>
-  <p>진보지질(주) 현장 일일 보고</p>
-  <a class="btn" href="https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform">
-    📋 현장일보 작성
-  </a>
-  <span class="company">진보지질(주) ⓒ 2026</span>
+
+  <!-- 헤더 -->
+  <div class="header">
+    <img class="logo" src="icons/icon-192.png" alt="로고">
+    <div class="header-text">
+      <h1>진보지질(주)</h1>
+      <p>현장 작업 앱</p>
+    </div>
+    <div class="date-chip" id="today"></div>
+  </div>
+
+  <!-- 현장 선택 카드 -->
+  <div class="card">
+    <div class="card-label">📍 현장 선택</div>
+    <div class="select-wrap">
+      <select id="field-select" onchange="onFieldChange()">
+        <option value="">-- 현장을 선택하세요 --</option>
+        <option value="영월다운홀시험">영월다운홀시험</option>
+        <option value="그린페이지 후기리현장">그린페이지 후기리현장</option>
+        <option value="NEW">＋ 새 현장 추가</option>
+      </select>
+    </div>
+
+    <!-- 새 현장 입력 -->
+    <div class="new-field-area" id="new-field-area">
+      <input type="text" id="new-field-input"
+        placeholder="현장명 입력 (예: 원주-단계)"
+        oninput="onNewFieldInput()">
+    </div>
+
+    <!-- 선택된 현장 뱃지 -->
+    <div class="field-badge" id="field-badge">
+      <div class="field-badge-icon">📍</div>
+      <div class="field-badge-text">
+        <div class="field-badge-label">선택된 현장</div>
+        <div class="field-badge-name" id="badge-name"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 액션 버튼 -->
+  <div class="action-area" id="action-area">
+
+    <!-- 현장일보 작성 -->
+    <a id="btn-report" class="btn btn-report" href="#" target="_blank">
+      <div class="btn-icon">📋</div>
+      <div class="btn-content">
+        <span class="btn-title">현장일보 작성</span>
+        <span class="btn-sub">구글폼으로 일일 보고서 작성</span>
+      </div>
+      <div class="btn-arrow">›</div>
+    </a>
+
+    <!-- 파일 보내기 -->
+    <a id="btn-file" class="btn btn-file" href="#">
+      <div class="btn-icon">📎</div>
+      <div class="btn-content">
+        <span class="btn-title">파일 보내기</span>
+        <span class="btn-sub">사진·문서를 이메일로 전송</span>
+      </div>
+      <div class="btn-arrow" style="color:#5eb3ff">›</div>
+    </a>
+
+    <div class="file-guide">
+      📎 <strong>파일 보내기</strong>를 누르면 이메일 앱이 열립니다<br>
+      제목에 현장명이 자동 입력됩니다<br>
+      사진·한글·캐드·PDF 모두 첨부 가능
+    </div>
+
+    <p class="footer-tip">
+      파일은 자동으로 NAS에 저장됩니다<br>
+      완료 후 SMS로 확인 메시지가 발송됩니다
+    </p>
+  </div>
+
   <script>
-    // 자동 리디렉션 (2초 후)
-    setTimeout(() => {
-      window.location.href = "https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform";
-    }, 2000);
+    const FORM_URL = 'https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform';
+    const RECEIVER = 'syleekr525@gmail.com';
+
+    // 날짜 표시
+    const now = new Date();
+    document.getElementById('today').textContent =
+      now.toLocaleDateString('ko-KR', { month:'long', day:'numeric', weekday:'short' });
+
+    function getFieldName() {
+      const sel = document.getElementById('field-select').value;
+      return sel === 'NEW'
+        ? document.getElementById('new-field-input').value.trim()
+        : sel;
+    }
+
+    function onFieldChange() {
+      const sel = document.getElementById('field-select').value;
+      const newArea = document.getElementById('new-field-area');
+
+      if (sel === 'NEW') {
+        newArea.classList.add('show');
+        hideBadge();
+        hideActions();
+      } else if (sel) {
+        newArea.classList.remove('show');
+        showBadgeAndActions(sel);
+      } else {
+        newArea.classList.remove('show');
+        hideBadge();
+        hideActions();
+      }
+    }
+
+    function onNewFieldInput() {
+      const val = document.getElementById('new-field-input').value.trim();
+      if (val.length >= 2) {
+        showBadgeAndActions(val);
+      } else {
+        hideBadge();
+        hideActions();
+      }
+    }
+
+    function showBadgeAndActions(fieldName) {
+      // 뱃지 표시
+      document.getElementById('badge-name').textContent = fieldName;
+      document.getElementById('field-badge').classList.add('show');
+
+      // 현장일보 버튼
+      document.getElementById('btn-report').href = FORM_URL;
+
+      // 파일 보내기 버튼 (mailto)
+      const today = new Date().toLocaleDateString('ko-KR');
+      const subj  = encodeURIComponent('[진보지질 파일] ' + fieldName);
+      const body  = encodeURIComponent(
+        '현장명: ' + fieldName + '\n' +
+        '발송일: ' + today + '\n\n' +
+        '※ 사진 및 파일을 첨부해 주세요'
+      );
+      document.getElementById('btn-file').href =
+        'mailto:' + RECEIVER + '?subject=' + subj + '&body=' + body;
+
+      // 버튼 표시
+      document.getElementById('action-area').classList.add('show');
+    }
+
+    function hideBadge() {
+      document.getElementById('field-badge').classList.remove('show');
+      document.getElementById('badge-name').textContent = '';
+    }
+
+    function hideActions() {
+      document.getElementById('action-area').classList.remove('show');
+    }
   </script>
 </body>
 </html>
