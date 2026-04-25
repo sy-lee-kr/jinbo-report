@@ -319,6 +319,7 @@
   </div>
 
   <script>
+    const API_URL  = 'https://script.google.com/macros/s/AKfycbwRBoqq7c-UJkuEFrYn1sCIUYUhk8U5gavILi7ey6SCy5w2AFlfZTdvztrvBo6eqvAV/exec';
     const FORM_URL = 'https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform';
     const RECEIVER = 'syleekr525@gmail.com';
 
@@ -326,6 +327,34 @@
     const now = new Date();
     document.getElementById('today').textContent =
       now.toLocaleDateString('ko-KR', { month:'long', day:'numeric', weekday:'short' });
+
+    // 현장 목록 동적 로딩
+    async function loadFields() {
+      const sel = document.getElementById('field-select');
+      try {
+        const res  = await fetch(API_URL);
+        const data = await res.json();
+        sel.innerHTML = '<option value="">-- 현장 선택 또는 새 현장 추가 --</option>';
+        if (data.fields && data.fields.length > 0) {
+          data.fields.forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f.name;
+            opt.textContent = f.name + ' (' + f.code + ')';
+            sel.appendChild(opt);
+          });
+        }
+        const newOpt = document.createElement('option');
+        newOpt.value = 'NEW';
+        newOpt.textContent = '＋ 새 현장 추가';
+        sel.appendChild(newOpt);
+      } catch(e) {
+        // API 실패 시 새 현장 추가만 표시
+        sel.innerHTML =
+          '<option value="">-- 현장 선택 또는 새 현장 추가 --</option>' +
+          '<option value="NEW">＋ 새 현장 추가</option>';
+      }
+    }
+    loadFields(); // 앱 시작 시 자동 로딩
 
     function getFieldName() {
       const sel = document.getElementById('field-select').value;
