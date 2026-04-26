@@ -689,7 +689,10 @@
           <div class="sd-box-label">경사 (Dip)</div>
           <div class="sd-box-value" id="val-dip">--</div>
           <div class="sd-box-unit">°</div>
-          <div class="sd-box-dir" id="dir-dip">--</div>
+          <!-- 노란색: 8방위 + 경사값 (예: NE 32°) -->
+          <div id="dip-dir8" style="font-size:15px;font-weight:700;color:#e9c46a;margin-top:3px;letter-spacing:0.5px;">--</div>
+          <!-- 경사방향 각도 -->
+          <div id="dir-dip" style="font-size:11px;color:#666;margin-top:2px;">--°</div>
         </div>
       </div>
 
@@ -725,12 +728,12 @@
     <div class="card">
       <div class="card-label">🪨 구조 유형</div>
       <div class="struct-grid" id="struct-grid">
-        <button class="struct-btn selected" onclick="selectStruct(this,'층서')"><span class="struct-icon">📐</span>층서</button>
+        <button class="struct-btn selected" onclick="selectStruct(this,'절리')"><span class="struct-icon">🔱</span>절리</button>
         <button class="struct-btn" onclick="selectStruct(this,'단층')"><span class="struct-icon">⚡</span>단층</button>
+        <button class="struct-btn" onclick="selectStruct(this,'편리')"><span class="struct-icon">✂️</span>편리</button>
+        <button class="struct-btn" onclick="selectStruct(this,'층리')"><span class="struct-icon">📐</span>층리</button>
         <button class="struct-btn" onclick="selectStruct(this,'습곡')"><span class="struct-icon">🌊</span>습곡</button>
         <button class="struct-btn" onclick="selectStruct(this,'엽리')"><span class="struct-icon">🍃</span>엽리</button>
-        <button class="struct-btn" onclick="selectStruct(this,'편리')"><span class="struct-icon">✂️</span>편리</button>
-        <button class="struct-btn" onclick="selectStruct(this,'절리')"><span class="struct-icon">🔱</span>절리</button>
       </div>
     </div>
 
@@ -977,13 +980,14 @@
   let currentDip    = 0;     // 현재 경사각 (°)
   let currentDipDir = 0;     // 현재 경사 방향 (°)
   let currentHeading = 0;    // 현재 나침반 방위각 (°)
+  let currentGamma  = 0;     // 현재 gamma 값 (경사방향 부호 판단용)
   let isTrueNorth   = false; // false=자북, true=도북
   let strikeL = false;       // 주향 잠금
   let dipL    = false;       // 경사 잠금
   let lockedStrike = null;
   let lockedDip    = 0;
   let lockedDipDir = 0;
-  let selectedStruct  = '층서';
+  let selectedStruct  = '절리';
   let selectedRock    = '화강암';
   let selectedWeather = '맑음';
   let measurements = [];       // 임시 저장 목록
@@ -1119,13 +1123,15 @@
     // W3C 스펙: gamma>0 = 오른쪽 기울기, gamma<0 = 왼쪽 기울기
     const beta  = e.beta  || 0;
     const gamma = e.gamma || 0;
-    const betaRad  = beta  * Math.PI / 180;
-    const gammaRad = gamma * Math.PI / 180;
+    currentGamma = gamma; // 경사방향 부호 판단용 저장
+
+    const betaRad    = beta    * Math.PI / 180;
+    const gammaRad   = gamma   * Math.PI / 180;
     const headingRad = heading * Math.PI / 180;
 
     // 기기 좌표계 중력 수평 성분
-    const gx = Math.sin(gammaRad);                       // 기기 오른쪽 방향 (gamma>0=오른쪽)
-    const gy = -Math.sin(betaRad) * Math.cos(gammaRad); // 기기 앞방향 (beta>0=앞으로)
+    const gx = Math.sin(gammaRad);                       // 기기 오른쪽 방향 (gamma>0=시계방향)
+    const gy = -Math.sin(betaRad) * Math.cos(gammaRad); // 기기 앞방향
     const gz =  Math.cos(betaRad) * Math.cos(gammaRad); // 수직 성분
 
     // 경사각: 수평면과의 각도
@@ -1133,31 +1139,52 @@
       Math.atan2(Math.sqrt(gx*gx + gy*gy), Math.abs(gz)) * 180 / Math.PI
     ));
 
-    // 기기→지구 좌표 변환 (회전행렬)
-    // 기기 x(오른쪽) → 지구: East=cos(h), North=-sin(h)
-    // 기기 y(앞)    → 지구: East=sin(h),  North=cos(h)
-    const eastComp  =  gx * Math.cos(headingRad) + gy * Math.sin(headingRad);
-    const northComp = -gx * Math.sin(headingRad) + gy * Math.cos(headingRad);
-
-    // 경사방향: atan2(동쪽, 북쪽) → 0=N, 90=E, 180=S, 270=W
-    const dipDir = (Math.atan2(eastComp, northComp) * 180 / Math.PI + 360) % 360;
+    // 경사방향 계산
+    // ── 주향 잠금 시: 잠금값 ± 90° (gamma 부호로 결정)
+    // ── 주향 미잠금 시: 3D 벡터 변환
+    let dipDir;
+    if (strikeL && lockedStrike !== null) {
+      // gamma > 0 = 시계방향 기울기 → +90°
+      // gamma < 0 = 반시계방향 기울기 → -90°
+      dipDir = gamma >= 0
+        ? (lockedStrike + 90) % 360
+        : (lockedStrike - 90 + 360) % 360;
+    } else {
+      // 3D 벡터 변환 (주향 미잠금)
+      const eastComp  =  gx * Math.cos(headingRad) + gy * Math.sin(headingRad);
+      const northComp = -gx * Math.sin(headingRad) + gy * Math.cos(headingRad);
+      dipDir = (Math.atan2(eastComp, northComp) * 180 / Math.PI + 360) % 360;
+    }
 
     // ── 잠금 적용 후 화면 업데이트 ───────────────────
     currentHeading = heading;
+
+    // ── 주향 업데이트 (잠금 해제 시) ──
     if (!strikeL) {
       currentStrike = strike;
       document.getElementById('val-strike').textContent = Math.round(strike);
       document.getElementById('dir-strike').textContent = strikeNotation(strike);
     }
+
+    // ── 경사 업데이트 (경사 잠금 해제 시) ──
     if (!dipL) {
       currentDip    = dip;
       currentDipDir = dipDir;
-      document.getElementById('val-dip').textContent = Math.round(dip);
-      document.getElementById('dir-dip').textContent =
-        bearingToDir(dipDir) + ' ' + Math.round(dip) + '°';
-      document.getElementById('dip-bar').style.width = (dip / 90 * 100) + '%';
-      document.getElementById('dip-bar-pct').textContent = Math.round(dip) + '°';
+      updateDipDisplay(dip, dipDir);
     }
+  }
+
+  /* 경사 표시 업데이트 */
+  function updateDipDisplay(dip, dipDir) {
+    const dipRound = Math.round(dip);
+    const dirRound = Math.round(dipDir);
+    const dir8 = bearingToDir8(dipDir);    // NE / SW / E-W 등 8방위
+
+    document.getElementById('val-dip').textContent     = dipRound;
+    document.getElementById('dip-bar').style.width     = (dip / 90 * 100) + '%';
+    document.getElementById('dip-bar-pct').textContent = dipRound + '°';
+    document.getElementById('dip-dir8').textContent    = dir8 + ' ' + dipRound + '°'; // 노란색: "NE 32°"
+    document.getElementById('dir-dip').textContent     = dirRound + '°';               // 경사방향 각도
   }
 
   /* ─────────────────────────────────────────────
@@ -1173,13 +1200,34 @@
     return 'N' + (180 - h) + '°W';
   }
 
-  function bearingToDir(deg) {
-    const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-    return dirs[Math.round(deg / 22.5) % 16];
+  /* ─────────────────────────────────────────────
+     8방위 변환 (N/NE/E/SE/S/SW/W/NW)
+     경사방향 표시용 — NE 같은 16방위 없음
+     각 방위 경계:
+       N  : 337.5 ~ 22.5
+       NE : 22.5  ~ 67.5
+       E  : 67.5  ~ 112.5
+       SE : 112.5 ~ 157.5
+       S  : 157.5 ~ 202.5
+       SW : 202.5 ~ 247.5
+       W  : 247.5 ~ 292.5
+       NW : 292.5 ~ 337.5
+  ───────────────────────────────────────────── */
+  function bearingToDir8(deg) {
+    const d = ((deg % 360) + 360) % 360;
+    if (d >= 359.5 || d <   0.5) return 'N';
+    if (d <  89.5)               return 'NE';
+    if (d <  90.5)               return 'E';
+    if (d < 179.5)               return 'SE';
+    if (d < 180.5)               return 'S';
+    if (d < 269.5)               return 'SW';
+    if (d < 270.5)               return 'W';
+    return 'NW';
   }
-  function formatDipDir(deg) {
-    const dirs = ['N','NE','E','SE','S','SW','W','NW'];
-    return dirs[Math.round(deg / 45) % 8];
+
+  // 주향 박스용 8방위 (dir-strike)
+  function bearingToDir(deg) {
+    return bearingToDir8(deg);
   }
   function setStatus(type, msg) {
     const el = document.getElementById('sensor-status');
@@ -1196,7 +1244,10 @@
       const btn = document.getElementById('lock-strike');
       if (strikeL) {
         lockedStrike = currentStrike;
-        btn.textContent = '🔒 주향 잠김 ' + (lockedStrike !== null ? Math.round(lockedStrike) + '°' : '');
+        const strikeLabel = lockedStrike !== null
+          ? Math.round(lockedStrike) + '° (' + strikeNotation(lockedStrike) + ')'
+          : '--';
+        btn.textContent = '🔒 주향 ' + strikeLabel;
         btn.classList.add('locked');
       } else {
         btn.textContent = '🔓 주향 잠금';
@@ -1208,7 +1259,7 @@
       if (dipL) {
         lockedDip    = currentDip;
         lockedDipDir = currentDipDir;
-        btn.textContent = '🔒 경사 잠김 ' + Math.round(lockedDip) + '°';
+        btn.textContent = '🔒 경사 잠김 ' + Math.round(lockedDip) + '° (' + bearingToDir8(lockedDipDir) + ')';
         btn.classList.add('locked');
       } else {
         btn.textContent = '🔓 경사 잠금';
@@ -1252,7 +1303,20 @@
   function captureMeasurement() {
     const strikeVal = strikeL ? lockedStrike : currentStrike;
     const dipVal    = dipL    ? lockedDip    : currentDip;
-    const dipDirVal = dipL    ? lockedDipDir : currentDipDir;
+
+    // ── 경사방향 결정 ──────────────────────────────────
+    // 주향 잠금 시: 잠금값 ± 90° (현재 gamma 부호로 결정)
+    //   gamma >= 0 (시계방향): +90°
+    //   gamma <  0 (반시계방향): -90°
+    // 주향 미잠금 시: 현재 계산값 사용
+    let dipDirVal;
+    if (strikeL && lockedStrike !== null) {
+      dipDirVal = currentGamma >= 0
+        ? (lockedStrike + 90) % 360
+        : (lockedStrike - 90 + 360) % 360;
+    } else {
+      dipDirVal = currentDipDir;
+    }
 
     if (strikeVal === null) {
       alert('⚠️ 주향값이 없습니다. 센서가 연결됐는지 확인해 주세요.');
@@ -1267,26 +1331,27 @@
     const mId       = measurements.length + 1;
 
     const row = {
-      id:         mId,
-      timestamp:  new Date().toLocaleString('ko-KR'),
+      id:              mId,
+      timestamp:       new Date().toLocaleString('ko-KR'),
       fieldCode,
       fieldName,
       pointNo,
-      lat:        gpsData.lat != null ? gpsData.lat.toFixed(6) : '',
-      lng:        gpsData.lng != null ? gpsData.lng.toFixed(6) : '',
-      alt:        gpsData.alt != null ? gpsData.alt.toFixed(1) : '',
-      accuracy:   gpsData.acc != null ? gpsData.acc.toFixed(0) : '',
-      strike:     Math.round(strikeVal),
-      strikeNotation: strikeNotation(strikeVal),
-      dip:        Math.round(dipVal),
-      dipDir:     Math.round(dipDirVal),
-      dipDirStr:  bearingToDir(dipDirVal),
-      northType:  isTrueNorth ? '도북(TN)' : '자북(MN)',
-      structType: selectedStruct,
-      rockType:   selectedRock,
-      weather:    selectedWeather,
+      lat:             gpsData.lat != null ? gpsData.lat.toFixed(6) : '',
+      lng:             gpsData.lng != null ? gpsData.lng.toFixed(6) : '',
+      alt:             gpsData.alt != null ? gpsData.alt.toFixed(1) : '',
+      accuracy:        gpsData.acc != null ? gpsData.acc.toFixed(0) : '',
+      strike:          Math.round(strikeVal),
+      strikeNotation:  strikeNotation(strikeVal),
+      dip:             Math.round(dipVal),
+      dipDir:          Math.round(dipDirVal),
+      dipDir8:         bearingToDir8(dipDirVal),     // 8방위 (NE, SW 등)
+      northType:       isTrueNorth ? '도북(TN)' : '자북(MN)',
+      strikeLocked:    strikeL ? '주향잠금' : '',
+      structType:      selectedStruct,
+      rockType:        selectedRock,
+      weather:         selectedWeather,
       notes,
-      sent:       false   // 전송 여부
+      sent:            false
     };
 
     measurements.push(row);
@@ -1360,8 +1425,8 @@
         </div>
         <div class="saved-item-body">
           <span class="saved-item-struct">${m.structType}</span> ·
-          주향 <strong>${m.strikeNotation || m.strike + '°'}</strong> ·
-          경사 <strong>${m.dip}°</strong> ${m.dipDirStr || ''}(${m.dipDir}°)<br>
+          주향 <strong>${m.strikeNotation || m.strike + '°'}</strong>${m.strikeLocked ? ' 🔒' : ''} ·
+          경사 <strong>${m.dip}°</strong> <span style="color:#e9c46a">${m.dipDir8 || ''}(${m.dipDir}°)</span><br>
           암종: ${m.rockType} · 날씨: ${m.weather} · ${m.northType}<br>
           위치: ${m.lat||'--'}, ${m.lng||'--'} (고도 ${m.alt||'--'}m)
           ${m.notes ? '<br>📝 ' + m.notes : ''}
@@ -1382,7 +1447,7 @@
     const rows = measurements.map(m =>
       [m.id, m.timestamp, m.fieldCode, m.fieldName, m.pointNo,
        m.lat, m.lng, m.alt, m.accuracy,
-       m.strikeNotation, m.strike, m.dip, m.dipDirStr, m.dipDir, m.northType,
+       m.strikeNotation, m.strike, m.dip, m.dipDir8, m.dipDir, m.northType,
        m.structType, m.rockType, m.weather, m.notes, m.sent ? '전송완료' : '미전송']
         .map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',')
     );
