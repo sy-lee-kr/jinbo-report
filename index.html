@@ -980,19 +980,39 @@
     sensorsInited = true;
     setStatus('warn', '⏳ 센서 권한 요청 중...');
 
-    // iOS 13+ DeviceOrientation 권한
+    // ── iOS 13+ 권한 요청 ──────────────────────────────
     if (typeof DeviceOrientationEvent !== 'undefined' &&
         typeof DeviceOrientationEvent.requestPermission === 'function') {
       try {
         const perm = await DeviceOrientationEvent.requestPermission();
-        if (perm !== 'granted') { setStatus('err','❌ 방향 센서 권한 거부됨'); return; }
-      } catch(e) { setStatus('err','❌ 센서 권한 오류: ' + e.message); return; }
+        if (perm !== 'granted') {
+          setStatus('err', '❌ 방향 센서 권한이 거부됐습니다. Safari 설정에서 허용해 주세요.');
+          return;
+        }
+      } catch(e) {
+        setStatus('err', '❌ 센서 권한 오류: ' + e.message);
+        return;
+      }
     }
 
-    // DeviceOrientation 리스너
-    window.addEventListener('deviceorientation', onOrientation, true);
+    // ── Android: deviceorientationabsolute (절대 자북 기준) ──
+    //    alpha=0 이 정북, 반시계방향 증가 → (360-alpha)%360 으로 변환
+    let absoluteSupported = false;
+    window.addEventListener('deviceorientationabsolute', e => {
+      if (e.alpha !== null) {
+        absoluteSupported = true;
+        onOrientation(e, 'absolute');
+      }
+    }, true);
 
-    // GPS
+    // ── iOS / fallback: deviceorientation (webkitCompassHeading 포함) ──
+    window.addEventListener('deviceorientation', e => {
+      // Android 절대값이 이미 작동 중이면 무시
+      if (absoluteSupported) return;
+      onOrientation(e, 'relative');
+    }, true);
+
+    // ── GPS ───────────────────────────────────────────
     if ('geolocation' in navigator) {
       gpsWatch = navigator.geolocation.watchPosition(
         pos => {
@@ -1004,7 +1024,8 @@
           };
           document.getElementById('gps-lat').textContent = gpsData.lat.toFixed(5) + '°';
           document.getElementById('gps-lng').textContent = gpsData.lng.toFixed(5) + '°';
-          document.getElementById('gps-alt').textContent = gpsData.alt ? gpsData.alt.toFixed(1) + 'm' : 'N/A';
+          document.getElementById('gps-alt').textContent =
+            gpsData.alt !== null ? gpsData.alt.toFixed(1) + 'm' : 'N/A';
           document.getElementById('gps-acc').textContent = '±' + gpsData.acc.toFixed(0) + 'm';
         },
         err => {},
@@ -1015,32 +1036,76 @@
     setStatus('ok', '✅ 센서 연결됨 — 휴대폰을 지층면에 평행하게 놓으세요');
   }
 
-  function onOrientation(e) {
-    // alpha = 나침반 방향 (0=북, 시계방향)
-    // beta  = 앞뒤 기울기 (-180~180)
-    // gamma = 좌우 기울기 (-90~90)
-    if (e.alpha === null) return;
+  /**
+   * 센서 이벤트 처리 — 핵심 로직
+   *
+   * ▸ heading (방위각): 기기 앞면이 향하는 자북 기준 각도 (0=북, 시계방향)
+   *
+   *   iOS  → event.webkitCompassHeading  (이미 절대 자북 기준, 시계방향)
+   *   Android absolute → (360 - alpha) % 360  (alpha는 반시계방향이므로 반전)
+   *
+   * ▸ 나침반 바늘: heading 방향의 반대로 회전해야 N이 항상 위를 향함
+   *   기기가 동쪽(90°)으로 돌면 바늘은 -90° → 바늘 N이 화면 위쪽 유지
+   *
+   * ▸ 주향(Strike) = heading
+   *   휴대폰 앞면을 지층에 수직으로 세우면 앞면이 향하는 방위 = 주향
+   *
+   * ▸ 경사(Dip) = 기울기 센서 (beta, gamma)로 계산
+   *   beta  = 앞뒤 기울기 (-180 ~ 180)
+   *   gamma = 좌우 기울기 (-90 ~ 90)
+   *   경사각 = atan2(sqrt(gamma²), cos(beta 라디안)) 로 계산
+   */
+  function onOrientation(e, mode) {
+    let heading = null;
 
-    const alpha = e.alpha || 0;
+    if (mode === 'relative') {
+      // ── iOS: webkitCompassHeading 사용 ──
+      if (e.webkitCompassHeading !== undefined && e.webkitCompassHeading !== null) {
+        heading = e.webkitCompassHeading; // 0=북, 시계방향, 절대값
+      } else {
+        // iOS가 아닌데 absolute 이벤트도 없는 구형 기기
+        setStatus('warn', '⚠️ 이 기기는 절대 방위각을 지원하지 않습니다');
+        return;
+      }
+    } else {
+      // ── Android absolute: alpha는 반시계방향이므로 변환 ──
+      if (e.alpha === null || e.alpha === undefined) return;
+      heading = (360 - e.alpha) % 360; // 시계방향 자북 기준으로 변환
+    }
+
+    // ── 도북 보정 (선택) ──────────────────────────────
+    let strike = heading;
+    if (isTrueNorth) strike = (heading + MAG_DECL + 360) % 360;
+
+    // ── 나침반 바늘 회전 ──────────────────────────────
+    // 기기가 heading 방향으로 회전하면, 바늘은 -heading 만큼 회전
+    // → 항상 N 방향(화면 위)을 유지
+    document.getElementById('needle').style.transform =
+      'translateX(-50%) translateY(-100%) rotate(' + (-heading) + 'deg)';
+
+    // ── 경사(Dip) 계산 ────────────────────────────────
     const beta  = e.beta  || 0;
     const gamma = e.gamma || 0;
 
-    // 주향 계산 (자북 기준, 도북 보정 선택)
-    let strike = (360 - alpha) % 360; // 나침반 반전
-    if (isTrueNorth) strike = (strike + MAG_DECL + 360) % 360;
+    // 지층면에 기기를 세웠을 때의 경사각
+    // gamma: 좌우 기울기 → 주요 경사 성분
+    // beta:  앞뒤 기울기 → 보조 성분
+    // 수직(90°) 기준에서의 기울기를 경사각으로 변환
+    const betaRad  = beta  * Math.PI / 180;
+    const gammaRad = gamma * Math.PI / 180;
+    let dip = Math.abs(Math.atan2(
+      Math.sqrt(Math.sin(gammaRad) ** 2 + Math.sin(betaRad) ** 2),
+      Math.abs(Math.cos(betaRad) * Math.cos(gammaRad))
+    ) * 180 / Math.PI);
+    dip = Math.min(Math.max(dip, 0), 90);
 
-    // 경사각 계산 (beta, gamma 조합)
-    const dipRad = Math.sqrt(beta * beta + gamma * gamma);
-    let dip = Math.min(dipRad, 90);
+    // ── 경사 방향 (주향 + 90°) ────────────────────────
+    // 경사 방향 = 지층이 기울어지는 방향 (주향의 오른쪽 직각)
+    const dipDir = (strike + 90) % 360;
 
-    // 경사 방향 (주향 + 90°)
-    let dipDir = (strike + 90) % 360;
-
+    // ── 잠금 적용 후 화면 업데이트 ───────────────────
     if (!strikeL) {
       currentStrike = strike;
-      // 나침반 바늘 회전
-      document.getElementById('needle').style.transform =
-        'translateX(-50%) translateY(-100%) rotate(' + strike + 'deg)';
       document.getElementById('val-strike').textContent = Math.round(strike);
       document.getElementById('dir-strike').textContent = bearingToDir(strike);
     }
@@ -1049,7 +1114,8 @@
       currentDip    = dip;
       currentDipDir = dipDir;
       document.getElementById('val-dip').textContent = Math.round(dip);
-      document.getElementById('dir-dip').textContent = formatDipDir(dipDir) + ' ' + Math.round(dip) + '°';
+      document.getElementById('dir-dip').textContent =
+        formatDipDir(dipDir) + ' ' + Math.round(dip) + '°';
       document.getElementById('dip-bar').style.width = (dip / 90 * 100) + '%';
       document.getElementById('dip-bar-pct').textContent = Math.round(dip) + '°';
     }
