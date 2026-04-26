@@ -21,7 +21,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 20px 40px;
+      padding: 0 0 80px;
     }
 
     /* ── 헤더 ── */
@@ -29,47 +29,75 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 28px;
+      padding: 20px 20px 12px;
       width: 100%;
-      max-width: 400px;
+      max-width: 440px;
     }
-    .logo { width: 52px; height: 52px; }
-    .header-text h1 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #C9A227;
-    }
-    .header-text p {
-      font-size: 12px;
-      color: #888;
-      margin-top: 2px;
-    }
+    .logo { width: 44px; height: 44px; border-radius: 10px; }
+    .header-text h1 { font-size: 17px; font-weight: 700; color: #C9A227; }
+    .header-text p  { font-size: 11px; color: #888; margin-top: 1px; }
     .date-chip {
       margin-left: auto;
       background: #252525;
       border-radius: 20px;
-      padding: 6px 12px;
+      padding: 5px 11px;
       font-size: 11px;
       color: #888;
       white-space: nowrap;
     }
 
+    /* ── 탭 바 ── */
+    .tab-bar {
+      display: flex;
+      width: 100%;
+      max-width: 440px;
+      background: #222;
+      border-radius: 14px;
+      padding: 4px;
+      margin: 0 20px 16px;
+      gap: 4px;
+      box-sizing: border-box;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 4px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #666;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .tab-btn .tab-icon { font-size: 18px; }
+    .tab-btn.active {
+      background: #C9A227;
+      color: #1a1a1a;
+    }
+
+    /* ── 공통 패널 ── */
+    .panel { display: none; width: 100%; max-width: 440px; padding: 0 16px; }
+    .panel.active { display: block; }
+
     /* ── 카드 ── */
     .card {
       background: #252525;
-      border-radius: 18px;
-      padding: 22px;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 14px;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
     }
     .card-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: #C9A227;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     /* ── 드롭다운 ── */
@@ -77,351 +105,1177 @@
     .select-wrap::after {
       content: '▾';
       position: absolute;
-      right: 16px;
-      top: 50%;
+      right: 14px; top: 50%;
       transform: translateY(-50%);
-      color: #C9A227;
-      font-size: 16px;
+      color: #C9A227; font-size: 14px;
       pointer-events: none;
     }
     select {
       width: 100%;
-      padding: 15px 44px 15px 16px;
+      padding: 14px 40px 14px 14px;
       background: #333;
       border: 1.5px solid #444;
-      border-radius: 12px;
+      border-radius: 11px;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       outline: none;
-      appearance: none;
-      -webkit-appearance: none;
+      appearance: none; -webkit-appearance: none;
       cursor: pointer;
-      transition: border-color 0.2s;
     }
     select:focus { border-color: #C9A227; }
-    option { background: #333; }
 
     /* ── 새 현장 입력 ── */
-    .new-field-area {
-      display: none;
-      margin-top: 12px;
-    }
+    .new-field-area { display: none; margin-top: 10px; }
     .new-field-area.show { display: block; }
-    input[type=text] {
+    input[type="text"], input[type="number"], textarea {
       width: 100%;
-      padding: 14px 16px;
+      padding: 13px 14px;
       background: #333;
-      border: 1.5px solid #C9A227;
-      border-radius: 12px;
+      border: 1.5px solid #444;
+      border-radius: 11px;
       color: #fff;
       font-size: 15px;
       outline: none;
     }
-    input::placeholder { color: #666; }
+    input:focus, textarea:focus { border-color: #C9A227; }
+    textarea { resize: none; min-height: 70px; }
 
-    /* ── 선택된 현장 뱃지 ── */
+    /* ── 배지 ── */
     .field-badge {
-      display: none;
-      margin-top: 14px;
-      background: linear-gradient(135deg, #1a2a0a, #1e3a1a);
-      border: 1px solid #4a8a2a;
-      border-radius: 10px;
-      padding: 12px 16px;
       display: none;
       align-items: center;
       gap: 10px;
+      background: #1e2e1e;
+      border: 1px solid #2a4a2a;
+      border-radius: 11px;
+      padding: 11px 14px;
+      margin-top: 10px;
     }
     .field-badge.show { display: flex; }
     .field-badge-icon { font-size: 20px; }
-    .field-badge-text {
-      flex: 1;
-    }
-    .field-badge-label {
-      font-size: 10px;
-      color: #6dbf3a;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-    .field-badge-name {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      margin-top: 2px;
-    }
+    .field-badge-label { font-size: 10px; color: #888; }
+    .field-badge-name { font-size: 14px; font-weight: 700; color: #6dbf3a; }
 
-    /* ── 액션 버튼 영역 ── */
-    .action-area {
-      display: none;
-      width: 100%;
-      max-width: 400px;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .action-area.show { display: flex; }
-
-    /* ── 버튼 ── */
+    /* ── 액션 버튼 ── */
+    .action-area { display: none; }
+    .action-area.show { display: block; }
     .btn {
       display: flex;
       align-items: center;
-      padding: 0;
-      border-radius: 16px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      overflow: hidden;
-      transition: transform 0.1s, opacity 0.1s;
+      gap: 14px;
       width: 100%;
+      padding: 16px 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.15s;
     }
-    .btn:active { transform: scale(0.97); opacity: 0.9; }
-
+    .btn:active { opacity: 0.8; }
     .btn-icon {
-      width: 64px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
     }
-    .btn-content {
-      flex: 1;
-      padding: 0 16px;
-      text-align: left;
-    }
-    .btn-title {
-      font-size: 16px;
-      font-weight: 700;
-      display: block;
-    }
-    .btn-sub {
-      font-size: 11px;
-      opacity: 0.75;
-      display: block;
-      margin-top: 2px;
-    }
-    .btn-arrow {
-      font-size: 18px;
-      padding-right: 16px;
-      opacity: 0.5;
-    }
-
-    /* 현장일보 작성 버튼 */
-    .btn-report {
-      background: linear-gradient(135deg, #C9A227, #e8c547);
-      color: #1a1a1a;
-    }
+    .btn-content { flex: 1; text-align: left; }
+    .btn-title { display: block; font-size: 15px; font-weight: 700; }
+    .btn-sub   { display: block; font-size: 11px; opacity: 0.7; margin-top: 2px; }
+    .btn-arrow { font-size: 18px; opacity: 0.5; }
+    .btn-report { background: linear-gradient(135deg, #C9A227, #e8c547); color: #1a1a1a; }
     .btn-report .btn-icon { background: rgba(0,0,0,0.1); }
-
-    /* 파일 보내기 버튼 */
-    .btn-file {
-      background: #1e3a5f;
-      color: #fff;
-      border: 1.5px solid #2a5a8f;
-    }
+    .btn-file { background: #1e3a5f; color: #fff; border: 1.5px solid #2a5a8f; }
     .btn-file .btn-icon { background: rgba(255,255,255,0.05); color: #5eb3ff; }
     .btn-file .btn-title { color: #5eb3ff; }
-
-    /* ── 파일 안내 텍스트 ── */
     .file-guide {
-      margin-top: 2px;
+      margin-top: 4px;
       background: #1e2a1e;
       border: 1px solid #2a4a2a;
       border-radius: 10px;
       padding: 10px 14px;
-      font-size: 11px;
-      color: #888;
-      line-height: 1.7;
+      font-size: 11px; color: #888; line-height: 1.7;
     }
     .file-guide strong { color: #6dbf3a; }
+    .footer-tip { font-size: 11px; color: #555; text-align: center; margin-top: 8px; line-height: 1.6; }
 
-    /* ── 하단 설명 ── */
-    .footer-tip {
-      font-size: 11px;
-      color: #555;
-      text-align: center;
-      margin-top: 8px;
-      line-height: 1.6;
+    /* ═══════════════════════════════════════
+       📋 지시서 탭
+    ═══════════════════════════════════════ */
+    .doc-list { margin-top: 10px; }
+    .doc-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #333;
+      border-radius: 11px;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      text-decoration: none;
+      color: #fff;
+      border: 1px solid #444;
+      transition: border-color 0.2s;
     }
+    .doc-item:active { border-color: #C9A227; }
+    .doc-icon { font-size: 22px; flex-shrink: 0; }
+    .doc-name { flex: 1; font-size: 13px; font-weight: 600; word-break: break-all; }
+    .doc-meta { font-size: 10px; color: #888; margin-top: 2px; }
+    .doc-dl { font-size: 18px; color: #C9A227; }
+    .doc-empty {
+      text-align: center;
+      color: #555;
+      font-size: 13px;
+      padding: 30px 0;
+      line-height: 2;
+    }
+    .doc-loading { text-align: center; color: #888; font-size: 13px; padding: 24px 0; }
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: #C9A227;
+      color: #1a1a1a;
+      border: none;
+      border-radius: 11px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .btn-primary:active { opacity: 0.85; }
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      background: #2a2a2a;
+      color: #888;
+      border: 1px solid #444;
+      border-radius: 11px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .notice-box {
+      background: #1e2a3e;
+      border: 1px solid #2a4a6a;
+      border-radius: 11px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #7ab3e0;
+      line-height: 1.7;
+      margin-top: 4px;
+    }
+
+    /* ═══════════════════════════════════════
+       🧭 주향경사 탭
+    ═══════════════════════════════════════ */
+    .compass-ring {
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      border: 3px solid #444;
+      margin: 0 auto 16px;
+      position: relative;
+      background: radial-gradient(circle, #2a2a2a, #1a1a1a);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .compass-ring::before {
+      content: 'N';
+      position: absolute; top: 10px; left: 50%;
+      transform: translateX(-50%);
+      color: #ff5555; font-size: 14px; font-weight: 700;
+    }
+    .compass-ring::after {
+      content: 'S';
+      position: absolute; bottom: 10px; left: 50%;
+      transform: translateX(-50%);
+      color: #888; font-size: 12px;
+    }
+    .compass-needle {
+      width: 4px; height: 80px;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) translateY(-100%) rotate(0deg);
+      transition: transform 0.2s ease;
+    }
+    .needle-n { width: 4px; height: 50%; background: #ff5555; border-radius: 2px 2px 0 0; }
+    .needle-s { width: 4px; height: 50%; background: #555; border-radius: 0 0 2px 2px; }
+    .compass-labels {
+      display: flex;
+      justify-content: space-around;
+      font-size: 12px;
+      color: #888;
+      position: absolute;
+      width: 100%;
+    }
+    .sd-value-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .sd-box {
+      background: #333;
+      border-radius: 11px;
+      padding: 14px;
+      text-align: center;
+    }
+    .sd-box-label { font-size: 10px; color: #888; margin-bottom: 4px; }
+    .sd-box-value { font-size: 28px; font-weight: 700; color: #C9A227; }
+    .sd-box-unit  { font-size: 11px; color: #666; }
+    .sd-box-dir   { font-size: 13px; color: #aaa; margin-top: 2px; }
+
+    .dip-bar-wrap {
+      background: #333;
+      border-radius: 11px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .dip-bar-label { font-size: 11px; color: #888; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .dip-bar-bg { background: #444; border-radius: 4px; height: 10px; overflow: hidden; }
+    .dip-bar-fill { height: 100%; background: linear-gradient(90deg, #2a9d8f, #e9c46a, #e76f51); border-radius: 4px; transition: width 0.3s; }
+
+    .struct-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+    .struct-btn {
+      padding: 10px 4px;
+      border: 1.5px solid #444;
+      border-radius: 9px;
+      background: #2a2a2a;
+      color: #888;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .struct-btn.selected {
+      border-color: #C9A227;
+      background: #2e2800;
+      color: #C9A227;
+      font-weight: 700;
+    }
+    .struct-btn .struct-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+
+    .rock-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+    .rock-btn {
+      padding: 9px 8px;
+      border: 1.5px solid #444;
+      border-radius: 9px;
+      background: #2a2a2a;
+      color: #888;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .rock-btn.selected {
+      border-color: #8b5cf6;
+      background: #1e1628;
+      color: #a78bfa;
+      font-weight: 700;
+    }
+
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+    .weather-btn {
+      padding: 8px 4px;
+      border: 1.5px solid #444;
+      border-radius: 9px;
+      background: #2a2a2a;
+      color: #888;
+      font-size: 11px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .weather-btn.selected {
+      border-color: #38bdf8;
+      background: #0c1e2e;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+    .weather-btn .w-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+
+    .gps-box {
+      background: #1a2a1a;
+      border: 1px solid #2a4a2a;
+      border-radius: 11px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #6dbf3a;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .gps-item { flex: 1; min-width: 100px; }
+    .gps-item-label { color: #888; font-size: 10px; }
+    .gps-item-value { font-size: 13px; font-weight: 600; }
+
+    .lock-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .lock-btn {
+      padding: 12px;
+      border: 1.5px solid #444;
+      border-radius: 11px;
+      background: #2a2a2a;
+      color: #888;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+    }
+    .lock-btn.locked {
+      border-color: #f59e0b;
+      background: #2a2000;
+      color: #f59e0b;
+    }
+
+    .saved-list { margin-top: 10px; max-height: 260px; overflow-y: auto; }
+    .saved-item {
+      background: #2a2a2a;
+      border-radius: 10px;
+      padding: 11px 13px;
+      margin-bottom: 7px;
+      font-size: 12px;
+      border-left: 3px solid #C9A227;
+    }
+    .saved-item-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .saved-item-num { color: #C9A227; font-weight: 700; }
+    .saved-item-time { color: #666; font-size: 10px; }
+    .saved-item-body { color: #aaa; line-height: 1.6; }
+    .saved-item-struct { color: #e9c46a; font-weight: 600; }
+
+    .calibrating { animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .sensor-status {
+      font-size: 11px;
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: #2a2a2a;
+    }
+    .sensor-status.ok   { color: #6dbf3a; background: #1a2a1a; }
+    .sensor-status.warn { color: #f59e0b; background: #2a2000; }
+    .sensor-status.err  { color: #ef4444; background: #2a1010; }
+
+    .sheet-result {
+      font-size: 12px;
+      text-align: center;
+      padding: 8px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .sheet-result.ok  { background:#1a2a1a; color:#6dbf3a; }
+    .sheet-result.err { background:#2a1010; color:#ef4444; }
+
+    .btn-save-sd {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #2a9d8f, #264653);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .btn-save-sd:active { opacity: 0.85; }
+    .btn-save-sd:disabled { opacity: 0.4; cursor: default; }
   </style>
 </head>
 <body>
 
   <!-- 헤더 -->
-  <div class="header">
-    <img class="logo" src="icons/icon-192.png" alt="로고">
+  <div class="header" style="width:100%;max-width:440px;">
+    <img class="logo" src="icons/icon-192.png" alt="로고" onerror="this.style.display='none'">
     <div class="header-text">
       <h1>진보지질(주)</h1>
-      <p>현장 작업 앱</p>
+      <p>현장 작업 앱 v2.0</p>
     </div>
     <div class="date-chip" id="today"></div>
   </div>
 
-  <!-- 현장 선택 카드 -->
-  <div class="card">
-    <div class="card-label">📍 현장 선택</div>
-    <div class="select-wrap">
-      <select id="field-select" onchange="onFieldChange()">
-        <option value="">-- 현장 선택 또는 새 현장 추가 --</option>
-        <option value="NEW">＋ 새 현장 추가</option>
-      </select>
-    </div>
-
-    <!-- 새 현장 입력 -->
-    <div class="new-field-area" id="new-field-area">
-      <input type="text" id="new-field-input"
-        placeholder="현장명 입력 (예: 원주-단계)"
-        oninput="onNewFieldInput()">
-    </div>
-
-    <!-- 선택된 현장 뱃지 -->
-    <div class="field-badge" id="field-badge">
-      <div class="field-badge-icon">📍</div>
-      <div class="field-badge-text">
-        <div class="field-badge-label">선택된 현장</div>
-        <div class="field-badge-name" id="badge-name"></div>
-      </div>
-    </div>
+  <!-- 탭 바 -->
+  <div class="tab-bar" style="width:calc(100% - 32px); max-width:440px;">
+    <button class="tab-btn active" onclick="switchTab('home',this)">
+      <span class="tab-icon">🏠</span>
+      <span>현장일보</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('docs',this)">
+      <span class="tab-icon">📋</span>
+      <span>지시서</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('strike',this)">
+      <span class="tab-icon">🧭</span>
+      <span>주향경사</span>
+    </button>
   </div>
 
-  <!-- 액션 버튼 -->
-  <div class="action-area" id="action-area">
+  <!-- ══════════════════════════════════════
+       🏠 TAB 1: 현장일보 (기존 기능)
+  ══════════════════════════════════════ -->
+  <div class="panel active" id="panel-home">
 
-    <!-- 현장일보 작성 -->
-    <a id="btn-report" class="btn btn-report" href="#" target="_blank">
-      <div class="btn-icon">📋</div>
-      <div class="btn-content">
-        <span class="btn-title">현장일보 작성</span>
-        <span class="btn-sub">구글폼으로 일일 보고서 작성</span>
+    <!-- 현장 선택 카드 -->
+    <div class="card">
+      <div class="card-label">📍 현장 선택</div>
+      <div class="select-wrap">
+        <select id="field-select" onchange="onFieldChange()">
+          <option value="">-- 현장 선택 또는 새 현장 추가 --</option>
+          <option value="NEW">＋ 새 현장 추가</option>
+        </select>
       </div>
-      <div class="btn-arrow">›</div>
-    </a>
-
-    <!-- 파일 보내기 -->
-    <a id="btn-file" class="btn btn-file" href="#">
-      <div class="btn-icon">📎</div>
-      <div class="btn-content">
-        <span class="btn-title">파일 보내기</span>
-        <span class="btn-sub">사진·문서를 이메일로 전송</span>
+      <div class="new-field-area" id="new-field-area">
+        <input type="text" id="new-field-input"
+          placeholder="현장명 입력 (예: 원주-단계)"
+          oninput="onNewFieldInput()">
       </div>
-      <div class="btn-arrow" style="color:#5eb3ff">›</div>
-    </a>
-
-    <div class="file-guide">
-      📎 <strong>파일 보내기</strong>를 누르면 이메일 앱이 열립니다<br>
-      제목에 현장명이 자동 입력됩니다<br>
-      사진·한글·캐드·PDF 모두 첨부 가능
+      <div class="field-badge" id="field-badge">
+        <div class="field-badge-icon">📍</div>
+        <div class="field-badge-text">
+          <div class="field-badge-label">선택된 현장</div>
+          <div class="field-badge-name" id="badge-name"></div>
+        </div>
+      </div>
     </div>
 
-    <p class="footer-tip">
-      파일은 자동으로 NAS에 저장됩니다<br>
-      완료 후 SMS로 확인 메시지가 발송됩니다
-    </p>
-  </div>
+    <!-- 액션 버튼 -->
+    <div class="action-area" id="action-area">
+      <a id="btn-report" class="btn btn-report" href="#" target="_blank">
+        <div class="btn-icon">📋</div>
+        <div class="btn-content">
+          <span class="btn-title">현장일보 작성</span>
+          <span class="btn-sub">구글폼으로 일일 보고서 작성</span>
+        </div>
+        <div class="btn-arrow">›</div>
+      </a>
+      <a id="btn-file" class="btn btn-file" href="#">
+        <div class="btn-icon">📎</div>
+        <div class="btn-content">
+          <span class="btn-title">파일 보내기</span>
+          <span class="btn-sub">사진·문서를 이메일로 전송</span>
+        </div>
+        <div class="btn-arrow" style="color:#5eb3ff">›</div>
+      </a>
+      <div class="file-guide">
+        📎 <strong>파일 보내기</strong>를 누르면 이메일 앱이 열립니다<br>
+        제목에 현장명이 자동 입력됩니다<br>
+        사진·한글·캐드·PDF 모두 첨부 가능
+      </div>
+      <p class="footer-tip">파일은 자동으로 NAS에 저장됩니다<br>완료 후 SMS로 확인 메시지가 발송됩니다</p>
+    </div>
+
+  </div><!-- /panel-home -->
+
+  <!-- ══════════════════════════════════════
+       📋 TAB 2: 지시서
+  ══════════════════════════════════════ -->
+  <div class="panel" id="panel-docs">
+
+    <div class="card">
+      <div class="card-label">📋 현장 선택</div>
+      <div class="select-wrap">
+        <select id="doc-field-select" onchange="onDocFieldChange()">
+          <option value="">-- 현장을 선택하세요 --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card" id="doc-list-card" style="display:none;">
+      <div class="card-label" id="doc-list-label">📄 작업 지시서</div>
+      <div id="doc-list-body">
+        <div class="doc-loading">⏳ 파일 목록을 불러오는 중...</div>
+      </div>
+      <button class="btn-secondary" onclick="refreshDocList()">🔄 목록 새로고침</button>
+    </div>
+
+    <div class="notice-box">
+      📌 <strong>지시서 업로드 방법 (대표님·임원)</strong><br>
+      구글드라이브 → 진보지질/지시서/<br>
+      해당 현장코드 폴더에 파일 업로드<br><br>
+      📱 작업자는 현장 선택 후 다운로드
+    </div>
+
+  </div><!-- /panel-docs -->
+
+  <!-- ══════════════════════════════════════
+       🧭 TAB 3: 주향경사 측정
+  ══════════════════════════════════════ -->
+  <div class="panel" id="panel-strike">
+
+    <!-- 센서 상태 -->
+    <div class="sensor-status warn" id="sensor-status">
+      ⏳ 센서 초기화 중... 앱 권한을 허용해 주세요
+    </div>
+
+    <!-- GPS 정보 -->
+    <div class="gps-box" id="gps-box">
+      <div class="gps-item">
+        <div class="gps-item-label">위도</div>
+        <div class="gps-item-value" id="gps-lat">--</div>
+      </div>
+      <div class="gps-item">
+        <div class="gps-item-label">경도</div>
+        <div class="gps-item-value" id="gps-lng">--</div>
+      </div>
+      <div class="gps-item">
+        <div class="gps-item-label">고도(m)</div>
+        <div class="gps-item-value" id="gps-alt">--</div>
+      </div>
+      <div class="gps-item">
+        <div class="gps-item-label">정확도</div>
+        <div class="gps-item-value" id="gps-acc">--</div>
+      </div>
+    </div>
+
+    <!-- 나침반 + 측정값 -->
+    <div class="card">
+      <div class="card-label">🧭 실시간 측정</div>
+
+      <!-- 나침반 링 -->
+      <div class="compass-ring" id="compass-ring">
+        <div class="compass-needle" id="needle">
+          <div class="needle-n"></div>
+          <div class="needle-s"></div>
+        </div>
+        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#888;font-size:12px;">E</span>
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#888;font-size:12px;">W</span>
+      </div>
+
+      <!-- 주향/경사 수치 -->
+      <div class="sd-value-grid">
+        <div class="sd-box">
+          <div class="sd-box-label">주향 (Strike)</div>
+          <div class="sd-box-value" id="val-strike">--</div>
+          <div class="sd-box-unit">°</div>
+          <div class="sd-box-dir" id="dir-strike">--</div>
+        </div>
+        <div class="sd-box">
+          <div class="sd-box-label">경사 (Dip)</div>
+          <div class="sd-box-value" id="val-dip">--</div>
+          <div class="sd-box-unit">°</div>
+          <div class="sd-box-dir" id="dir-dip">--</div>
+        </div>
+      </div>
+
+      <!-- 경사 바 -->
+      <div class="dip-bar-wrap">
+        <div class="dip-bar-label">
+          <span>경사각</span>
+          <span id="dip-bar-pct">0°</span>
+        </div>
+        <div class="dip-bar-bg">
+          <div class="dip-bar-fill" id="dip-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- 주향/경사 잠금 -->
+      <div class="lock-grid">
+        <button class="lock-btn" id="lock-strike" onclick="toggleLock('strike')">🔓 주향 잠금</button>
+        <button class="lock-btn" id="lock-dip"    onclick="toggleLock('dip')">🔓 경사 잠금</button>
+      </div>
+
+      <!-- 자북/도북 + 편각 -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:12px;color:#888;">자북 / 도북:</span>
+        <button onclick="toggleNorth()" id="north-btn"
+          style="padding:6px 14px;border-radius:20px;border:1.5px solid #C9A227;background:#2a2000;color:#C9A227;font-size:12px;cursor:pointer;">
+          🧲 자북 (MN)
+        </button>
+        <span style="font-size:11px;color:#666;" id="declination-label">편각: -8.0°</span>
+      </div>
+    </div>
+
+    <!-- 구조 유형 선택 -->
+    <div class="card">
+      <div class="card-label">🪨 구조 유형</div>
+      <div class="struct-grid" id="struct-grid">
+        <button class="struct-btn selected" onclick="selectStruct(this,'층서')"><span class="struct-icon">📐</span>층서</button>
+        <button class="struct-btn" onclick="selectStruct(this,'단층')"><span class="struct-icon">⚡</span>단층</button>
+        <button class="struct-btn" onclick="selectStruct(this,'습곡')"><span class="struct-icon">🌊</span>습곡</button>
+        <button class="struct-btn" onclick="selectStruct(this,'엽리')"><span class="struct-icon">🍃</span>엽리</button>
+        <button class="struct-btn" onclick="selectStruct(this,'편리')"><span class="struct-icon">✂️</span>편리</button>
+        <button class="struct-btn" onclick="selectStruct(this,'절리')"><span class="struct-icon">🔱</span>절리</button>
+      </div>
+    </div>
+
+    <!-- 암석 종류 -->
+    <div class="card">
+      <div class="card-label">🏔 암석 종류</div>
+      <div class="rock-grid" id="rock-grid">
+        <button class="rock-btn selected" onclick="selectRock(this,'화강암')">🪨 화강암</button>
+        <button class="rock-btn" onclick="selectRock(this,'편마암')">🪨 편마암</button>
+        <button class="rock-btn" onclick="selectRock(this,'석회암')">🪨 석회암</button>
+        <button class="rock-btn" onclick="selectRock(this,'사암')">🪨 사암</button>
+        <button class="rock-btn" onclick="selectRock(this,'셰일')">🪨 셰일</button>
+        <button class="rock-btn" onclick="selectRock(this,'현무암')">🪨 현무암</button>
+        <button class="rock-btn" onclick="selectRock(this,'규암')">🪨 규암</button>
+        <button class="rock-btn" onclick="selectRock(this,'기타')">🪨 기타</button>
+      </div>
+    </div>
+
+    <!-- 날씨 -->
+    <div class="card">
+      <div class="card-label">🌤 날씨</div>
+      <div class="weather-grid" id="weather-grid">
+        <button class="weather-btn selected" onclick="selectWeather(this,'맑음')"><span class="w-icon">☀️</span>맑음</button>
+        <button class="weather-btn" onclick="selectWeather(this,'흐림')"><span class="w-icon">☁️</span>흐림</button>
+        <button class="weather-btn" onclick="selectWeather(this,'비')"><span class="w-icon">🌧️</span>비</button>
+        <button class="weather-btn" onclick="selectWeather(this,'안개')"><span class="w-icon">🌫️</span>안개</button>
+      </div>
+    </div>
+
+    <!-- 특이사항 + 현장 선택 -->
+    <div class="card">
+      <div class="card-label">📝 특이사항</div>
+      <div class="select-wrap" style="margin-bottom:10px;">
+        <select id="sd-field-select">
+          <option value="">-- 현장 선택 --</option>
+        </select>
+      </div>
+      <input type="text" id="sd-point-no" placeholder="측점 번호 (예: BH-3)" style="margin-bottom:10px;">
+      <textarea id="sd-notes" placeholder="특이사항 입력 (선택)"></textarea>
+    </div>
+
+    <!-- 저장 버튼 -->
+    <button class="btn-save-sd" id="btn-save-sd" onclick="saveMeasurement()">
+      💾 측정값 저장 (구글시트)
+    </button>
+    <div id="sheet-result" class="sheet-result" style="display:none;"></div>
+
+    <!-- 저장된 측정 목록 -->
+    <div class="card" id="saved-card" style="display:none;margin-top:12px;">
+      <div class="card-label" id="saved-count-label">📊 저장된 측정</div>
+      <div class="saved-list" id="saved-list"></div>
+      <button class="btn-secondary" onclick="exportToCSV()" style="margin-top:8px;">📥 CSV 다운로드</button>
+    </div>
+
+  </div><!-- /panel-strike -->
 
   <script>
-    const API_URL  = 'https://script.google.com/macros/s/AKfycbwRBoqq7c-UJkuEFrYn1sCIUYUhk8U5gavILi7ey6SCy5w2AFlfZTdvztrvBo6eqvAV/exec';
-    const FORM_URL = 'https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform';
-    const RECEIVER = 'syleekr525@gmail.com';
+  /* ════════════════════════════════════
+     상수
+  ════════════════════════════════════ */
+  const API_URL   = 'https://script.google.com/macros/s/AKfycbwRBoqq7c-UJkuEFrYn1sCIUYUhk8U5gavILi7ey6SCy5w2AFlfZTdvztrvBo6eqvAV/exec';
+  const FORM_URL  = 'https://docs.google.com/forms/d/1AciprBvODLxlv2b5Zm-xYHwT2__CTHnICCT9LA7rnWU/viewform';
+  const RECEIVER  = 'syleekr525@gmail.com';
+  const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1ZJu07NWmpMRlcZNVY3FyV6WU7PwWj2uH9lFbtLC8r7E/edit';
+  const MAG_DECL  = -8.0;  // 한국 지자기 편각 (°) — 서편각 음수
 
-    // 날짜 표시
-    const now = new Date();
-    document.getElementById('today').textContent =
-      now.toLocaleDateString('ko-KR', { month:'long', day:'numeric', weekday:'short' });
+  /* ════════════════════════════════════
+     날짜
+  ════════════════════════════════════ */
+  const now = new Date();
+  document.getElementById('today').textContent =
+    now.toLocaleDateString('ko-KR', { month:'long', day:'numeric', weekday:'short' });
 
-    // 현장 목록 동적 로딩
-    async function loadFields() {
-      const sel = document.getElementById('field-select');
-      try {
-        const res  = await fetch(API_URL);
-        const data = await res.json();
-        sel.innerHTML = '<option value="">-- 현장 선택 또는 새 현장 추가 --</option>';
-        if (data.fields && data.fields.length > 0) {
-          data.fields.forEach(f => {
-            const opt = document.createElement('option');
-            opt.value = f.name;
-            opt.textContent = f.name + ' (' + f.code + ')';
-            sel.appendChild(opt);
-          });
-        }
+  /* ════════════════════════════════════
+     탭 전환
+  ════════════════════════════════════ */
+  function switchTab(name, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'strike') initSensors();
+    if (name === 'docs' && !docFieldsLoaded) loadDocFields();
+  }
+
+  /* ════════════════════════════════════
+     현장 목록 로딩 (공통)
+  ════════════════════════════════════ */
+  let fieldsCache = [];
+  async function loadFields() {
+    const sels = ['field-select', 'doc-field-select', 'sd-field-select'];
+    try {
+      const res  = await fetch(API_URL);
+      const data = await res.json();
+      fieldsCache = data.fields || [];
+    } catch(e) {
+      fieldsCache = [];
+    }
+    sels.forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      const base = id === 'field-select'
+        ? '<option value="">-- 현장 선택 또는 새 현장 추가 --</option>'
+        : id === 'doc-field-select'
+          ? '<option value="">-- 현장을 선택하세요 --</option>'
+          : '<option value="">-- 현장 선택 --</option>';
+      sel.innerHTML = base;
+      fieldsCache.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.code || f.name;
+        opt.textContent = f.name + (f.code ? ' (' + f.code + ')' : '');
+        opt.dataset.name = f.name;
+        opt.dataset.code = f.code || '';
+        sel.appendChild(opt);
+      });
+      if (id === 'field-select') {
         const newOpt = document.createElement('option');
         newOpt.value = 'NEW';
         newOpt.textContent = '＋ 새 현장 추가';
         sel.appendChild(newOpt);
-      } catch(e) {
-        // API 실패 시 새 현장 추가만 표시
-        sel.innerHTML =
-          '<option value="">-- 현장 선택 또는 새 현장 추가 --</option>' +
-          '<option value="NEW">＋ 새 현장 추가</option>';
       }
+    });
+  }
+  loadFields();
+
+  /* ════════════════════════════════════
+     TAB 1: 현장일보
+  ════════════════════════════════════ */
+  function getFieldName() {
+    const sel = document.getElementById('field-select').value;
+    return sel === 'NEW'
+      ? document.getElementById('new-field-input').value.trim()
+      : sel;
+  }
+
+  function onFieldChange() {
+    const sel = document.getElementById('field-select').value;
+    const newArea = document.getElementById('new-field-area');
+    if (sel === 'NEW') {
+      newArea.classList.add('show');
+      hideBadge(); hideActions();
+    } else if (sel) {
+      newArea.classList.remove('show');
+      const opt = document.querySelector('#field-select option[value="'+sel+'"]');
+      showBadgeAndActions(opt ? (opt.dataset.name || sel) : sel);
+    } else {
+      newArea.classList.remove('show');
+      hideBadge(); hideActions();
     }
-    loadFields(); // 앱 시작 시 자동 로딩
+  }
 
-    function getFieldName() {
-      const sel = document.getElementById('field-select').value;
-      return sel === 'NEW'
-        ? document.getElementById('new-field-input').value.trim()
-        : sel;
+  function onNewFieldInput() {
+    const val = document.getElementById('new-field-input').value.trim();
+    if (val.length >= 2) showBadgeAndActions(val);
+    else { hideBadge(); hideActions(); }
+  }
+
+  function showBadgeAndActions(fieldName) {
+    document.getElementById('badge-name').textContent = fieldName;
+    document.getElementById('field-badge').classList.add('show');
+    document.getElementById('btn-report').href = FORM_URL;
+    const today = new Date().toLocaleDateString('ko-KR');
+    const subj = encodeURIComponent('[진보지질 파일] ' + fieldName);
+    const body = encodeURIComponent(
+      '현장명: ' + fieldName + '\n발송일: ' + today + '\n\n※ 사진 및 파일을 첨부해 주세요'
+    );
+    document.getElementById('btn-file').href =
+      'mailto:' + RECEIVER + '?subject=' + subj + '&body=' + body;
+    document.getElementById('action-area').classList.add('show');
+  }
+
+  function hideBadge() {
+    document.getElementById('field-badge').classList.remove('show');
+    document.getElementById('badge-name').textContent = '';
+  }
+  function hideActions() {
+    document.getElementById('action-area').classList.remove('show');
+  }
+
+  /* ════════════════════════════════════
+     TAB 2: 지시서
+  ════════════════════════════════════ */
+  let docFieldsLoaded = false;
+
+  function loadDocFields() {
+    docFieldsLoaded = true;
+    // loadFields()가 이미 doc-field-select 채워줌 (위에서 공통 처리)
+  }
+
+  async function onDocFieldChange() {
+    const sel = document.getElementById('doc-field-select');
+    const code = sel.value;
+    const name = sel.options[sel.selectedIndex]?.dataset?.name || code;
+    if (!code) {
+      document.getElementById('doc-list-card').style.display = 'none';
+      return;
+    }
+    document.getElementById('doc-list-card').style.display = 'block';
+    document.getElementById('doc-list-label').textContent = '📄 ' + name + ' 지시서';
+    document.getElementById('doc-list-body').innerHTML =
+      '<div class="doc-loading">⏳ 파일 목록을 불러오는 중...</div>';
+    try {
+      const res  = await fetch(API_URL + '?action=getDocs&fieldCode=' + encodeURIComponent(code));
+      const data = await res.json();
+      renderDocList(data.files || []);
+    } catch(e) {
+      renderDocList([]);
+    }
+  }
+
+  function renderDocList(files) {
+    const body = document.getElementById('doc-list-body');
+    if (!files || files.length === 0) {
+      body.innerHTML = `<div class="doc-empty">
+        📭 등록된 지시서가 없습니다<br>
+        <span style="font-size:11px;">대표님이 구글드라이브에<br>파일을 업로드하면 표시됩니다</span>
+      </div>`;
+      return;
+    }
+    body.innerHTML = files.map(f => {
+      const ext = (f.name || '').split('.').pop().toLowerCase();
+      const icon = ext === 'pdf' ? '📄' : ext === 'hwp' ? '📝' : ext === 'xlsx' || ext === 'xls' ? '📊' : '📎';
+      return `<a class="doc-item" href="${f.url || '#'}" target="_blank">
+        <span class="doc-icon">${icon}</span>
+        <div style="flex:1;">
+          <div class="doc-name">${f.name}</div>
+          <div class="doc-meta">${f.size || ''} ${f.modified || ''}</div>
+        </div>
+        <span class="doc-dl">⬇</span>
+      </a>`;
+    }).join('');
+  }
+
+  function refreshDocList() { onDocFieldChange(); }
+
+  /* ════════════════════════════════════
+     TAB 3: 주향경사 — 상태 변수
+  ════════════════════════════════════ */
+  let currentStrike = null;  // 나침반 방향 (°)
+  let currentDip    = 0;     // 경사각 (°)
+  let currentDipDir = 0;     // 경사 방향 (°)
+  let isTrueNorth   = false; // false=자북, true=도북
+  let strikeL = false;       // 주향 잠금
+  let dipL    = false;       // 경사 잠금
+  let lockedStrike = null;
+  let lockedDip    = 0;
+  let lockedDipDir = 0;
+  let selectedStruct  = '층서';
+  let selectedRock    = '화강암';
+  let selectedWeather = '맑음';
+  let measurements = [];
+  let gpsData = { lat: null, lng: null, alt: null, acc: null };
+  let sensorsInited = false;
+  let compassSub = null;
+  let accelSub   = null;
+  let gpsWatch   = null;
+
+  /* ════════════════════════════════════
+     TAB 3: 센서 초기화
+  ════════════════════════════════════ */
+  async function initSensors() {
+    if (sensorsInited) return;
+    sensorsInited = true;
+    setStatus('warn', '⏳ 센서 권한 요청 중...');
+
+    // iOS 13+ DeviceOrientation 권한
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+      try {
+        const perm = await DeviceOrientationEvent.requestPermission();
+        if (perm !== 'granted') { setStatus('err','❌ 방향 센서 권한 거부됨'); return; }
+      } catch(e) { setStatus('err','❌ 센서 권한 오류: ' + e.message); return; }
     }
 
-    function onFieldChange() {
-      const sel = document.getElementById('field-select').value;
-      const newArea = document.getElementById('new-field-area');
+    // DeviceOrientation 리스너
+    window.addEventListener('deviceorientation', onOrientation, true);
 
-      if (sel === 'NEW') {
-        newArea.classList.add('show');
-        hideBadge();
-        hideActions();
-      } else if (sel) {
-        newArea.classList.remove('show');
-        showBadgeAndActions(sel);
-      } else {
-        newArea.classList.remove('show');
-        hideBadge();
-        hideActions();
-      }
-    }
-
-    function onNewFieldInput() {
-      const val = document.getElementById('new-field-input').value.trim();
-      if (val.length >= 2) {
-        showBadgeAndActions(val);
-      } else {
-        hideBadge();
-        hideActions();
-      }
-    }
-
-    function showBadgeAndActions(fieldName) {
-      // 뱃지 표시
-      document.getElementById('badge-name').textContent = fieldName;
-      document.getElementById('field-badge').classList.add('show');
-
-      // 현장일보 버튼
-      document.getElementById('btn-report').href = FORM_URL;
-
-      // 파일 보내기 버튼 (mailto)
-      const today = new Date().toLocaleDateString('ko-KR');
-      const subj  = encodeURIComponent('[진보지질 파일] ' + fieldName);
-      const body  = encodeURIComponent(
-        '현장명: ' + fieldName + '\n' +
-        '발송일: ' + today + '\n\n' +
-        '※ 사진 및 파일을 첨부해 주세요'
+    // GPS
+    if ('geolocation' in navigator) {
+      gpsWatch = navigator.geolocation.watchPosition(
+        pos => {
+          gpsData = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            alt: pos.coords.altitude,
+            acc: pos.coords.accuracy
+          };
+          document.getElementById('gps-lat').textContent = gpsData.lat.toFixed(5) + '°';
+          document.getElementById('gps-lng').textContent = gpsData.lng.toFixed(5) + '°';
+          document.getElementById('gps-alt').textContent = gpsData.alt ? gpsData.alt.toFixed(1) + 'm' : 'N/A';
+          document.getElementById('gps-acc').textContent = '±' + gpsData.acc.toFixed(0) + 'm';
+        },
+        err => {},
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 }
       );
-      document.getElementById('btn-file').href =
-        'mailto:' + RECEIVER + '?subject=' + subj + '&body=' + body;
-
-      // 버튼 표시
-      document.getElementById('action-area').classList.add('show');
     }
 
-    function hideBadge() {
-      document.getElementById('field-badge').classList.remove('show');
-      document.getElementById('badge-name').textContent = '';
+    setStatus('ok', '✅ 센서 연결됨 — 휴대폰을 지층면에 평행하게 놓으세요');
+  }
+
+  function onOrientation(e) {
+    // alpha = 나침반 방향 (0=북, 시계방향)
+    // beta  = 앞뒤 기울기 (-180~180)
+    // gamma = 좌우 기울기 (-90~90)
+    if (e.alpha === null) return;
+
+    const alpha = e.alpha || 0;
+    const beta  = e.beta  || 0;
+    const gamma = e.gamma || 0;
+
+    // 주향 계산 (자북 기준, 도북 보정 선택)
+    let strike = (360 - alpha) % 360; // 나침반 반전
+    if (isTrueNorth) strike = (strike + MAG_DECL + 360) % 360;
+
+    // 경사각 계산 (beta, gamma 조합)
+    const dipRad = Math.sqrt(beta * beta + gamma * gamma);
+    let dip = Math.min(dipRad, 90);
+
+    // 경사 방향 (주향 + 90°)
+    let dipDir = (strike + 90) % 360;
+
+    if (!strikeL) {
+      currentStrike = strike;
+      // 나침반 바늘 회전
+      document.getElementById('needle').style.transform =
+        'translateX(-50%) translateY(-100%) rotate(' + strike + 'deg)';
+      document.getElementById('val-strike').textContent = Math.round(strike);
+      document.getElementById('dir-strike').textContent = bearingToDir(strike);
     }
 
-    function hideActions() {
-      document.getElementById('action-area').classList.remove('show');
+    if (!dipL) {
+      currentDip    = dip;
+      currentDipDir = dipDir;
+      document.getElementById('val-dip').textContent = Math.round(dip);
+      document.getElementById('dir-dip').textContent = formatDipDir(dipDir) + ' ' + Math.round(dip) + '°';
+      document.getElementById('dip-bar').style.width = (dip / 90 * 100) + '%';
+      document.getElementById('dip-bar-pct').textContent = Math.round(dip) + '°';
     }
+  }
+
+  function bearingToDir(deg) {
+    const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+    return dirs[Math.round(deg / 22.5) % 16];
+  }
+  function formatDipDir(deg) {
+    const dirs = ['N','NE','E','SE','S','SW','W','NW'];
+    return dirs[Math.round(deg / 45) % 8];
+  }
+  function setStatus(type, msg) {
+    const el = document.getElementById('sensor-status');
+    el.className = 'sensor-status ' + type;
+    el.textContent = msg;
+  }
+
+  /* ════════════════════════════════════
+     TAB 3: 잠금 / 자북·도북
+  ════════════════════════════════════ */
+  function toggleLock(type) {
+    if (type === 'strike') {
+      strikeL = !strikeL;
+      const btn = document.getElementById('lock-strike');
+      if (strikeL) {
+        lockedStrike = currentStrike;
+        btn.textContent = '🔒 주향 잠김 ' + (lockedStrike !== null ? Math.round(lockedStrike) + '°' : '');
+        btn.classList.add('locked');
+      } else {
+        btn.textContent = '🔓 주향 잠금';
+        btn.classList.remove('locked');
+      }
+    } else {
+      dipL = !dipL;
+      const btn = document.getElementById('lock-dip');
+      if (dipL) {
+        lockedDip    = currentDip;
+        lockedDipDir = currentDipDir;
+        btn.textContent = '🔒 경사 잠김 ' + Math.round(lockedDip) + '°';
+        btn.classList.add('locked');
+      } else {
+        btn.textContent = '🔓 경사 잠금';
+        btn.classList.remove('locked');
+      }
+    }
+  }
+
+  function toggleNorth() {
+    isTrueNorth = !isTrueNorth;
+    const btn = document.getElementById('north-btn');
+    btn.textContent = isTrueNorth ? '🌍 도북 (TN)' : '🧲 자북 (MN)';
+    document.getElementById('declination-label').textContent =
+      isTrueNorth ? '편각 ' + MAG_DECL + '° 적용중' : '편각: ' + MAG_DECL + '°';
+  }
+
+  /* ════════════════════════════════════
+     TAB 3: 구조·암석·날씨 선택
+  ════════════════════════════════════ */
+  function selectStruct(btn, val) {
+    document.querySelectorAll('.struct-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedStruct = val;
+  }
+  function selectRock(btn, val) {
+    document.querySelectorAll('.rock-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedRock = val;
+  }
+  function selectWeather(btn, val) {
+    document.querySelectorAll('.weather-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedWeather = val;
+  }
+
+  /* ════════════════════════════════════
+     TAB 3: 측정값 저장 → 구글시트
+  ════════════════════════════════════ */
+  async function saveMeasurement() {
+    const strikeVal = strikeL ? lockedStrike : currentStrike;
+    const dipVal    = dipL    ? lockedDip    : currentDip;
+    const dipDirVal = dipL    ? lockedDipDir : currentDipDir;
+
+    if (strikeVal === null) {
+      alert('⚠️ 주향값이 없습니다. 센서가 연결되었는지 확인해 주세요.');
+      return;
+    }
+
+    const fieldSel = document.getElementById('sd-field-select');
+    const fieldCode = fieldSel.value;
+    const fieldName = fieldSel.options[fieldSel.selectedIndex]?.dataset?.name || fieldCode;
+    const pointNo   = document.getElementById('sd-point-no').value.trim();
+    const notes     = document.getElementById('sd-notes').value.trim();
+    const timestamp = new Date().toLocaleString('ko-KR');
+    const mId = measurements.length + 1;
+
+    const row = {
+      id:         mId,
+      timestamp,
+      fieldCode,
+      fieldName,
+      pointNo,
+      lat:        gpsData.lat?.toFixed(6) || '',
+      lng:        gpsData.lng?.toFixed(6) || '',
+      alt:        gpsData.alt?.toFixed(1) || '',
+      accuracy:   gpsData.acc?.toFixed(0) || '',
+      strike:     Math.round(strikeVal),
+      strikeDir:  bearingToDir(strikeVal),
+      dip:        Math.round(dipVal),
+      dipDir:     formatDipDir(dipDirVal) + Math.round(dipDirVal) + '°',
+      northType:  isTrueNorth ? '도북(TN)' : '자북(MN)',
+      structType: selectedStruct,
+      rockType:   selectedRock,
+      weather:    selectedWeather,
+      notes
+    };
+
+    measurements.push(row);
+    renderSavedList();
+
+    // 구글시트 전송
+    const btn = document.getElementById('btn-save-sd');
+    btn.disabled = true;
+    btn.textContent = '⏳ 저장 중...';
+    showSheetResult('', '');
+
+    try {
+      const params = new URLSearchParams({ action: 'saveStrikeDip', ...row });
+      const res  = await fetch(API_URL + '?' + params.toString());
+      const data = await res.json();
+      if (data.success) {
+        showSheetResult('ok', '✅ 구글시트에 저장되었습니다 (' + mId + '번)');
+      } else {
+        showSheetResult('err', '⚠️ 로컬 저장 완료 (시트 전송 실패)');
+      }
+    } catch(e) {
+      showSheetResult('err', '📱 로컬 저장 완료 (오프라인 — 나중에 자동 전송)');
+      // 로컬스토리지 백업
+      const pending = JSON.parse(localStorage.getItem('sd_pending') || '[]');
+      pending.push(row);
+      localStorage.setItem('sd_pending', JSON.stringify(pending));
+    }
+
+    btn.disabled = false;
+    btn.textContent = '💾 측정값 저장 (구글시트)';
+  }
+
+  function showSheetResult(type, msg) {
+    const el = document.getElementById('sheet-result');
+    if (!msg) { el.style.display = 'none'; return; }
+    el.className = 'sheet-result ' + type;
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function renderSavedList() {
+    const card = document.getElementById('saved-card');
+    const list  = document.getElementById('saved-list');
+    const label = document.getElementById('saved-count-label');
+    if (measurements.length === 0) { card.style.display='none'; return; }
+    card.style.display = 'block';
+    label.textContent  = '📊 저장된 측정 (' + measurements.length + '건)';
+    list.innerHTML = measurements.slice().reverse().map(m =>
+      `<div class="saved-item">
+        <div class="saved-item-header">
+          <span class="saved-item-num">#${m.id} ${m.pointNo || ''}</span>
+          <span class="saved-item-time">${m.timestamp}</span>
+        </div>
+        <div class="saved-item-body">
+          <span class="saved-item-struct">${m.structType}</span> ·
+          주향 <strong>${m.strike}°</strong>(${m.strikeDir}) ·
+          경사 <strong>${m.dip}°</strong>(${m.dipDir})<br>
+          암종: ${m.rockType} · 날씨: ${m.weather}<br>
+          ${m.fieldName ? '현장: ' + m.fieldName + ' · ' : ''}
+          위치: ${m.lat||'--'}, ${m.lng||'--'} (고도 ${m.alt||'--'}m)
+          ${m.notes ? '<br>📝 ' + m.notes : ''}
+        </div>
+      </div>`
+    ).join('');
+  }
+
+  /* ════════════════════════════════════
+     CSV 다운로드
+  ════════════════════════════════════ */
+  function exportToCSV() {
+    if (measurements.length === 0) return;
+    const headers = ['번호','시각','현장코드','현장명','측점','위도','경도','고도(m)','정확도(m)',
+      '주향(°)','주향방향','경사(°)','경사방향','북기준','구조유형','암종','날씨','특이사항'];
+    const rows = measurements.map(m =>
+      [m.id, m.timestamp, m.fieldCode, m.fieldName, m.pointNo,
+       m.lat, m.lng, m.alt, m.accuracy,
+       m.strike, m.strikeDir, m.dip, m.dipDir, m.northType,
+       m.structType, m.rockType, m.weather, m.notes]
+        .map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',')
+    );
+    const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '주향경사_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+  }
+
+  /* ════════════════════════════════════
+     오프라인 펜딩 데이터 재전송 시도
+  ════════════════════════════════════ */
+  async function retryPending() {
+    const pending = JSON.parse(localStorage.getItem('sd_pending') || '[]');
+    if (pending.length === 0) return;
+    const success = [];
+    for (const row of pending) {
+      try {
+        const params = new URLSearchParams({ action: 'saveStrikeDip', ...row });
+        const res  = await fetch(API_URL + '?' + params.toString());
+        const data = await res.json();
+        if (data.success) success.push(row.id);
+      } catch(e) {}
+    }
+    if (success.length > 0) {
+      const remaining = pending.filter(r => !success.includes(r.id));
+      localStorage.setItem('sd_pending', JSON.stringify(remaining));
+    }
+  }
+  retryPending();
+
   </script>
 </body>
 </html>
